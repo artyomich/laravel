@@ -35,3 +35,12 @@ Route::group(['middleware' => 'web'], function () {
 
     Route::get('/home', 'HomeController@index');
 });
+
+Route::get(
+        'orders/{id}/edit',
+        ['uses'=>'OrderItemController@edit', 'as' => 'order.edit'])->where(['id'=>'[0-9]+']
+        );
+Route::get(
+        'orders',
+        ['uses'=>'OrderController@index', 'as' => 'orders']
+        );
