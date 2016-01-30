@@ -1,0 +1,1 @@
+var orderItemApp = angular.module('orderItemApp', ['orderItemCtrl', 'orderItemService']); 

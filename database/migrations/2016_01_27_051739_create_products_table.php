@@ -14,16 +14,11 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->increments('id');
-            
             $table->string('name',255);
             $table->text('description');
-            
             $table->integer('count')->unsigned();
-                       
             $table->decimal('price',15,2);
-     
             $table->timestamps();
-
         });
     }
 
