@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -17,7 +18,7 @@ class OrderController extends Controller
         //dd($orders);
         
         $orders = [
-            'orders' => Order::all(),
+            'orders' => Order::where('user_id', '=', Auth::user()->id)->get(),
             'count' => Order::count()
         ];
         return view('order.index', $orders);

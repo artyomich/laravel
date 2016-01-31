@@ -1,1 +1,4 @@
-var orderItemApp = angular.module('orderItemApp', ['orderItemCtrl', 'orderItemService']); 
+var orderItemApp = angular.module('orderItemApp', ['orderItemCtrl', 'orderItemService'] , function($interpolateProvider) {
+        $interpolateProvider.startSymbol('<%');
+        $interpolateProvider.endSymbol('%>');
+    });

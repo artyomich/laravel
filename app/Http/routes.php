@@ -36,19 +36,21 @@ Route::group(['middleware' => 'web'], function () {
 });
 
 //This route is for customer's orders
-Route::get('orders', ['uses' => 'OrderController@index', 'as' => 'orders']);
+Route::get('orders', ['uses' => 'OrderController@index', 'as' => 'orders', 'middleware' => array('web', 'auth')]);
 
 //This route is for editing orders by customers 
-//Route::get('orders/{id}/edit', ['uses' => 'OrderItemController@edit', 'as' => 'order.edit'])->where(['id'=>'[0-9]+']);
+Route::get('orders/{id}/edit', ['uses' => 'OrderItemController@show', 'as' => 'order.edit', 'middleware' => array('web', 'auth')])->where(['id' => '[0-9]+']);
 // API ROUTES ==================================  
-//Route::group(array('prefix' => 'api'), function() {
+Route::group(['prefix' => 'api', 'middleware' => array('web', 'auth')], function() {
 
     // since we will be using this just for CRUD, we won't need create and edit
     // Angular will handle both of those forms
     // this ensures that a user can't access api/create or api/edit when there's nothing there
 
-    Route::resource('orders/{id}/edit', 'OrderItemController@edit', array('only' => array('index', 'store', 'destroy')));
-//});
+    Route::resource('orders.items', 'OrderItemController');
+    Route::post('orders/{id}/items/{itemId}/quantity', 'OrderItemController@quantity');
+    Route::post('orders/{id}/receiver', 'OrderItemController@receiver');
+});
 
 // CATCH ALL ROUTE =============================  
 // all routes that are not home or api will be redirected to the frontend 

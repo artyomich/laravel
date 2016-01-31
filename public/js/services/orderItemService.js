@@ -7,24 +7,34 @@ angular.module('orderItemService', [])
 .factory('OrderItem', function($http) {
 
     return {
-        // get all the comments
-        get : function() {
-            return $http.get('/api/orders/1/edit');
+        // get all the order items
+        get : function(orderId) {
+            return $http.get('/index.php/api/orders/' + orderId + '/items');
         },
 
-        // save a comment (pass in orderItem data)
-        save : function(commentData) {
+        // save a order item  quantity
+        quantity : function(orderId, itemId, quantity) {
             return $http({
                 method: 'POST',
-                url: 'api/orders/1/edit ',
+                url: '/index.php/api/orders/'+orderId + '/items/' + itemId + '/quantity',
                 headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
-                data: $.param(orderItemData)
+                data: $.param({'quantity': quantity})
+            });
+        },
+        
+                // save a order item  quantity
+        receiver : function(orderId, receiverCityId) {
+            return $http({
+                method: 'POST',
+                url: '/index.php/api/orders/'+orderId + '/receiver',
+                headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
+                data: $.param({'receiver_city_id': receiverCityId})
             });
         },
 
         // destroy a comment
-        destroy : function(id) {
-            return $http.delete('/api/orders/1/edit/'+ id);
+        destroy : function(orderId, itemId) {
+            return $http.delete('/index.php/api/orders/'+ orderId + '/items/'+ itemId);
         }
     }
 

@@ -4,26 +4,68 @@
         <meta charset="UTF-8">
         <title>Шоп</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    </head>
-     <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-            <!-- JS -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.min.js"></script> <!-- load angular -->
-    
-    <!-- ANGULAR -->
-    <!-- all angular resources will be loaded from the /public folder -->
-        <script src="js/controllers/mainCtrl.js"></script> <!-- load our controller -->
-        <script src="js/services/commentService.js"></script> <!-- load our service -->
-        <script src="js/app.js"></script> <!-- load our application -->
+        <link rel="stylesheet" href="/css/jquery-ui-1.8.21.custom.css">
         
-<!-- declare our angular app and controller --> 
-<body class="container" ng-app="commentApp" ng-controller="mainController"> 
- 
-       
+        <!-- JS -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.min.js"></script> <!-- load angular -->
+
+        <!-- ANGULAR -->
+        <!-- all angular resources will be loaded from the /public folder -->
+        <script src="/js/controllers/orderItemCtrl.js"></script> <!-- load our controller -->
+        <script src="/js/services/orderItemService.js"></script> <!-- load our service -->
+        <script src="/js/app.js"></script> <!-- load our application -->
+        <script src="/js/jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>
+        <script>
+            	/**
+	 * подтягиваем список городов ajax`ом, данные jsonp в зависмости от введённых символов
+	 */
+	$(function() {
+	  $("#city").autocomplete({
+	    source: function(request,response) {
+	      $.ajax({
+	        url: "http://api.cdek.ru/city/getListByTerm/jsonp.php?callback=?",
+	        dataType: "jsonp",
+	        data: {
+	        	q: function () { return $("#city").val() },
+	        	name_startsWith: function () { return $("#city").val() }
+	        },
+	        success: function(data) {
+	          response($.map(data.geonames, function(item) {
+	            return {
+	              label: item.name,
+	              value: item.name,
+	              id: item.id
+	            }
+	          }));
+	        }
+	      });
+	    },
+	    minLength: 1,
+	    select: function(event,ui) {
+	    	//console.log("Yep!");
+	    	angular.element('#orderItemController').scope().receiverCityId(ui.item.id);
+	    }
+	  });
+	});
+        </script>
+    </head>    
+    <!-- declare our angular app and controller --> 
+    <body id="orderItemController" class="container" ng-init="initData({{ $order->id }})" ng-app="orderItemApp" ng-controller="orderItemController"> 
+
+
         <div class="container">
             <h1 class="text-center">Заказ</h1><hr>
- <form ng-submit="submitOrderItem()">
-            @if (!$order_items->isEmpty())
+
+            <label for="city">Город-получатель: </label>
+            <div class="ui-widget" style="display: inline-block;">
+                <input id="city" />
+                <br />
+            </div>
+
+            <form ng-submit="submitOrderItem()">
+                @if (!$order->items->isEmpty())
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h1 class="panel-title">
@@ -36,56 +78,46 @@
                                     <th>Количество</th>
                                     <th>Цена</th>
                                     <th>Сумма</th>
+                                    <th>Действие</th>
                                 </tr>
-                @foreach ($order_items as $order_item)
-                                <tr>
-                                <td class="nowrap">
-                                      {{ $order_item->product_id }}
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <input type="text" class="form-control input-sm" name="quantity" ng-model="orderItemData.quantity" placeholder="Quantity">
-                                        {{ $order_item['quantity'] }}
-                                        </input>
-                                    </div>
-                                </td>
-                                <td>
-                                   {{ $order_item['price'] }}
-                                </td>
-                                <td>
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="glyphicon glyphicon-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                @endforeach
-                        </tbody></table>
+                                <tr ng-repeat="item in order.items">
+                                    <td class="nowrap">
+                                        <% item.product.name %>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control input-sm" name="quantity" ng-model="item.quantity" placeholder="Quantity" ng-blur="recalcQuantities(item)">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <% item.price %>
+                                    </td>
+                                    <td>
+                                        <% item.quantity %> x <% item.price %> = <% item.price * item.quantity %>
+                                    </td>
+                                    <td>
+                                        <button ng-click="deleteItem(item)" class="btn btn-danger">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody></table>
                     </div>
                 </div>  
-             </form>
+            </form>
             @else
-                    <h1 class="panel-title">
-                        Товаров в заказе нет :(
-                    </h1>
+            <h1 class="panel-title">
+                Товаров в заказе нет :(
+            </h1>
             @endif
             
-        
-    <!-- LOADING ICON =============================================== -->
-    <!-- show loading icon if the loading variable is set to true -->
-    <p class="text-center" ng-show="loading"><span class="fa fa-meh-o fa-5x fa-spin"></span></p>
-    
-    <!-- THE COMMENTS =============================================== -->
-    <!-- hide these comments if the loading variable is true -->
-    <div class="comment" ng-hide="loading" ng-repeat="orderItem in orderItems">
-    <h3>Comment #{{ orderItem.id }}</h3>
-    <p>{{ orderItem.text }}</p>
-    
-    <p><a href="#" ng-click="deleteOrderItem(orderItem.id)" class="text-muted">Delete</a></p>
-            
-            
-            <a class="bold" href="/index.php/orders/">
-                Вернутся ко всем моим заказам
-            </a>
-        </div>
+            <span>Вес:</span>
+            <span><% order.weight %></span>
+            <span>Цена доставки:</span>
+            <span><% order.delivery_price %></span>
+            <span>Итого:</span>
+            <span><% order.total %></span>
+
     </body>
+
 </html>
