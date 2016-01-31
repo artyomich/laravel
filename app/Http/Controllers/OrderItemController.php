@@ -57,16 +57,11 @@ class OrderItemController extends AngController {
             $calc->setDateExecute('2016-02-01');
             $calc->setTariffId('137');
             $calc->setModeDeliveryId('3');
-            $totalWeight = 0;
-            $totalPrice = 0;
             foreach ($order->items as $item) {
                 for ($i = 0; $i < $item->quantity; $i++) {
                     $calc->addGoodsItemByVolume($item->product->weight, 0.3);
                 }
-                $totalWeight += $item->product->weight * $item->quantity;
-                $totalPrice += $item->product->price * $item->quantity;
             }
-            $order->weight = $totalWeight;
             if ($calc->calculate() === true) {
                 $res = $calc->getResult();
                 $order->delivery_price = $res['result']['price'];
@@ -76,15 +71,24 @@ class OrderItemController extends AngController {
                 fwrite($f, "\n");
                 fclose($f);
             }
-            $order->total = $order->delivery_price + $totalPrice;
-            $order->save();
         }
+        $totalWeight = 0;
+        $totalPrice = 0;
+        foreach ($order->items as $item) {
+            for ($i = 0; $i < $item->quantity; $i++) {
+                $calc->addGoodsItemByVolume($item->product->weight, 0.3);
+            }
+            $totalWeight += $item->product->weight * $item->quantity;
+            $totalPrice += $item->product->price * $item->quantity;
+        }
+        $order->weight = $totalWeight;
+        $order->total = $order->delivery_price + $totalPrice;
+        $order->save();
     }
 
     public function index($id) {
         $order = Order::where('id', '=', $id)
                         ->where('user_id', '=', Auth::user()->id)->first();
-        $this->recalculateDelivery($order);
         return $this->orderToJson($order);
     }
 
