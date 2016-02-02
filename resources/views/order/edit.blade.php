@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Шоп</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/css/jquery-ui-1.8.21.custom.css">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
         
         <!-- JS -->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -16,7 +16,7 @@
         <script src="/js/controllers/orderItemCtrl.js"></script> <!-- load our controller -->
         <script src="/js/services/orderItemService.js"></script> <!-- load our service -->
         <script src="/js/app.js"></script> <!-- load our application -->
-        <script src="/js/jquery-ui-1.8.21.custom.min.js" type="text/javascript"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
         <script>
             	/**
 	 * подтягиваем список городов ajax`ом, данные jsonp в зависмости от введённых символов
@@ -56,7 +56,7 @@
 
 
         <div class="container">
-            <h1 class="text-center">Заказ</h1><hr>
+            <h1 class="text-center">Заказ №<% order.id %></h1><hr>
 
             <label for="city">Город-получатель: </label>
             <div class="ui-widget" style="display: inline-block;">
@@ -71,18 +71,29 @@
                         <h1 class="panel-title">
                             Мои заказы
                         </h1>
-                        <table class="table">
+                        <table class="table table-hover">
                             <tbody>
                                 <tr>
                                     <th>Товар</th>
-                                    <th>Количество</th>
+                                    <th>Вес, кг</th>
+                                    <th>Габариты, см</th>
                                     <th>Цена</th>
+                                    <th>Количество</th>
                                     <th>Сумма</th>
-                                    <th>Действие</th>
+                                    <th>Удалить</th>
                                 </tr>
                                 <tr ng-repeat="item in order.items">
                                     <td class="nowrap">
                                         <% item.product.name %>
+                                    </td>
+                                    <td>
+                                        <% item.product.weight %>
+                                    </td>
+                                    <td>
+                                        <% item.product.length %> x <% item.product.width %> x <% item.product.height %>
+                                    </td>
+                                    <td>
+                                        <% item.price %>
                                     </td>
                                     <td>
                                         <div class="form-group">
@@ -90,10 +101,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <% item.price %>
-                                    </td>
-                                    <td>
-                                        <% item.quantity %> x <% item.price %> = <% item.price * item.quantity %>
+                                        <% item.price * item.quantity %>
                                     </td>
                                     <td>
                                         <button ng-click="deleteItem(item)" class="btn btn-danger">
@@ -110,13 +118,16 @@
                 Товаров в заказе нет :(
             </h1>
             @endif
-            
-            <span>Вес:</span>
-            <span><% order.weight %></span>
-            <span>Цена доставки:</span>
-            <span><% order.delivery_price %></span>
-            <span>Итого:</span>
-            <span><% order.total %></span>
+            <dl class="dl-horizontal">
+            <dt>Вес</dt>
+            <dd><% order.weight %> кг</dd>
+            <dt>Объем:</dt>
+            <dd><% order.volume %> м<pow>3</pow></dd>
+            <dt>Цена доставки:</dt>
+            <dd><% order.delivery_price %> руб</dd>
+            <dt>Итого:</dt>
+            <dd><% order.total %> руб</dd>
+            </dl>
 
     </body>
 

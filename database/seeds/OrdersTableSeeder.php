@@ -17,8 +17,11 @@ class OrdersTableSeeder extends Seeder {
             'user_id' => '1',
             'total' => '4000',
             'comment' => 'Позвоните мне.',
+            'delivery_price' => '1200',
+            'quantity' => '1',
             'weight' => '40',
-            'distance' => '168'
+            'distance' => '168',
+            'volume' => '50'
         ));
 
         Order::create(array(
@@ -26,8 +29,10 @@ class OrdersTableSeeder extends Seeder {
             'user_id' => '1',
             'total' => '7200',
             'comment' => 'Есть в наличие?',
+            'delivery_price' => '1200',
             'weight' => '80',
-            'distance' => '568'
+            'distance' => '568',
+            'volume' => '50'
         ));
 
         Order::create(array(
@@ -35,8 +40,11 @@ class OrdersTableSeeder extends Seeder {
             'user_id' => '1',
             'total' => '1000',
             'comment' => 'Когда отправите?',
-            'weight' => '80',
-            'distance' => '269'
+            'delivery_price' => '1200',
+            'quantity' => '1',
+            'distance' => '269',
+            'weight' => '50',
+            'volume' => '50'
         ));
     }
 

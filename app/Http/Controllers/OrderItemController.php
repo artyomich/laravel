@@ -50,38 +50,47 @@ class OrderItemController extends AngController {
 
     private function recalculateDelivery($order) {
         $receiverCityId = $order->receiver_city_id;
+        
+       
+   
         if ($receiverCityId) {
+           
             $calc = new CalculatePriceDeliveryCdek();
             $calc->setSenderCityId('270');
             $calc->setReceiverCityId($receiverCityId);
             $calc->setDateExecute('2016-02-01');
-            $calc->setTariffId('137');
-            $calc->setModeDeliveryId('3');
+            $calc->setTariffId('1');
+         
             foreach ($order->items as $item) {
                 for ($i = 0; $i < $item->quantity; $i++) {
-                    $calc->addGoodsItemByVolume($item->product->weight, 0.3);
+                    $calc->addGoodsItemBySize($item->product->weight/100, $item->product->length, $item->product->width, $item->product->height);
                 }
             }
+              //
             if ($calc->calculate() === true) {
                 $res = $calc->getResult();
                 $order->delivery_price = $res['result']['price'];
             } else {
-                $f = fopen("/tmp/log.txt", "a");
+                $f = fopen("/tmp/log.txt", "a+");
                 fwrite($f, print_r($calc->getError(), true));
                 fwrite($f, "\n");
                 fclose($f);
             }
         }
+
         $totalWeight = 0;
+        $totalVolume = 0;
         $totalPrice = 0;
+
         foreach ($order->items as $item) {
-            for ($i = 0; $i < $item->quantity; $i++) {
-                $calc->addGoodsItemByVolume($item->product->weight, 0.3);
-            }
             $totalWeight += $item->product->weight * $item->quantity;
+            $totalVolume += $item->product->width * $item->product->length * $item->product->height * $item->quantity / 1000000;
             $totalPrice += $item->product->price * $item->quantity;
         }
+
         $order->weight = $totalWeight;
+        $order->volume = $totalVolume;
+
         $order->total = $order->delivery_price + $totalPrice;
         $order->save();
     }

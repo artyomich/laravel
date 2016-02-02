@@ -12,27 +12,28 @@
             <h1 class="text-center">Заказы</h1><hr>
 
             @if ( ! $orders->isEmpty() )
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h1 class="panel-title">
-                            Мои заказы
-                        </h1>
-                        
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <th>Номер заказа</th>
-                                    <th>Сумма заказа</th>
-                                    <th>Дата заказа</th>
-                                    <th>Редактирование заказа</th>
-                                </tr>
-                    
-                @foreach ($orders as $order)
-                                
-                                <tr>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1 class="panel-title">
+                        Мои заказы
+                    </h1>
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Номер заказа</th>
+                                <th>Сумма заказа</th>
+                                <th>Дата заказа</th>
+                                <th>Редактирование заказа</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($orders as $order)
+
+                            <tr>
                                 <td class="nowrap">
                                     <a class="bold" href="{{ $order['id'] }}/edit/">
-                                       {{ $order->id }}
+                                        {{ $order->id }}
                                     </a>
                                 </td>
                                 <td><span class="gray">{{ $order['total'] }}</span><br>
@@ -46,14 +47,16 @@
                                     </a>
                                 </td>
                             </tr>
-                @endforeach
-                        </tbody></table>
-                    </div>
-                </div>  
+                            
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>  
             @else
-                    <h1 class="panel-title">
-                        Заказов пока еще нет
-                    </h1>
+            <h1 class="panel-title">
+                Заказов пока еще нет
+            </h1>
             @endif
             <a class="bold" href="/index.php/home">
                 Вернутся на домашнюю страницу
