@@ -1,7 +1,7 @@
 
 angular.module('orderItemCtrl', [])
 
-// inject the Comment service into our controller
+// inject the orderItem service into our controller
         .controller('orderItemController', function ($scope, $http, OrderItem) {
             // object to hold all the data for the new comment form
             $scope.order = {};
@@ -21,8 +21,18 @@ angular.module('orderItemCtrl', [])
                         });
             }
 
-            $scope.receiverCityId = function (cityId) {
-                OrderItem.receiver($scope.order.id, cityId).success(function (data) {
+            $scope.receiverCityId = function (cityOutId) {
+                OrderItem.receiver($scope.order.id, cityOutId).success(function (data) {
+                    $scope.order = data;
+                    $scope.loading = false;
+                })
+                        .error(function (data) {
+                            console.log(data);
+                        });
+            }
+            
+            $scope.senderCityId = function (cityInId) {
+                OrderItem.sender($scope.order.id, cityInId).success(function (data) {
                     $scope.order = data;
                     $scope.loading = false;
                 })
@@ -53,6 +63,18 @@ angular.module('orderItemCtrl', [])
 
                 // use the function we created in our service
                 OrderItem.destroy($scope.order.id, item.id)
+                        .success(function (data) {
+                            $scope.order = data;
+                            $scope.loading = false;
+                        });
+            };
+
+            // ADD NEW ORDER ITEM ====================================================
+            $scope.addItem = function (item) {
+                $scope.loading = true;
+
+                // use the function we created in our service
+                OrderItem.add($scope.order.id, item.id)
                         .success(function (data) {
                             $scope.order = data;
                             $scope.loading = false;

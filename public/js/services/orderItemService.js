@@ -22,7 +22,7 @@ angular.module('orderItemService', [])
             });
         },
         
-                // save a order item  quantity
+        // save a receiver id
         receiver : function(orderId, receiverCityId) {
             return $http({
                 method: 'POST',
@@ -31,11 +31,32 @@ angular.module('orderItemService', [])
                 data: $.param({'receiver_city_id': receiverCityId})
             });
         },
+        
+        // save a sender id
+        sender : function(orderId, senderCityId) {
+            return $http({
+                method: 'POST',
+                url: '/index.php/api/orders/'+orderId + '/sender',
+                headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
+                data: $.param({'sender_city_id': senderCityId})
+            });
+        },
 
         // destroy a comment
         destroy : function(orderId, itemId) {
             return $http.delete('/index.php/api/orders/'+ orderId + '/items/'+ itemId);
+        },
+        
+        // add new product
+        add : function(orderId, itemId) {
+             return $http({
+                method: 'POST',
+                url: '/index.php/api/orders/'+orderId + '/items/' + itemId + '/add',
+                headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
+                data: $.param({'orderId': orderId})
+            });
         }
+ 
     }
 
 });

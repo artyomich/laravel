@@ -18,7 +18,6 @@ class OrdersTableSeeder extends Seeder {
             'total' => '4000',
             'comment' => 'Позвоните мне.',
             'delivery_price' => '1200',
-            'quantity' => '1',
             'weight' => '40',
             'distance' => '168',
             'volume' => '50'
@@ -41,7 +40,6 @@ class OrdersTableSeeder extends Seeder {
             'total' => '1000',
             'comment' => 'Когда отправите?',
             'delivery_price' => '1200',
-            'quantity' => '1',
             'distance' => '269',
             'weight' => '50',
             'volume' => '50'

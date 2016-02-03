@@ -27,6 +27,38 @@ class OrderItemController extends AngController {
 
         return $this->orderToJson($order);
     }
+    
+    public function add($id, $itemId) {
+        $order = Order::where('id', '=', $id)
+                        ->where('user_id', '=', Auth::user()->id)->first();
+        //$orderItem = $order->items()->findOrFail($id);
+        //$productId = $order->items()->findOrFail($itemId);
+  
+        //$orderItem = OrderItem::firstOrNew(array('quantity' => $add_quantity));
+        
+        //if(!$orderItem->isEmpty()){
+        //    $orderItem->quantity += (int) Input::get("add_quantity");
+        //    $orderItem->save();
+        //} else {
+        /*
+            $orderItem = new OrderItem;
+            $orderItem->order_id = (int) $id;
+            $orderItem->product_id = (int) $productId;
+            $orderItem->price = (int) $itemId;
+            $orderItem->quantity = (int) Input::get("add_quantity");
+            $orderItem->save();
+          */  
+            $orderItem = new OrderItem;
+            $orderItem->order_id = $id;
+            $orderItem->product_id = $id;
+            $orderItem->price = 1000;
+            $orderItem->quantity = 10;
+            $orderItem->save();
+        //}
+        $this->recalculateDelivery($order);
+
+        return $this->orderToJson($order);
+    }
 
     private function orderToJson($order) {
         $items = array();
@@ -43,22 +75,30 @@ class OrderItemController extends AngController {
     public function receiver($id) {
         $order = Order::where('id', '=', $id)
                         ->where('user_id', '=', Auth::user()->id)->first();
-        $order->receiver_city_id = Input::get("receiver_city_id");
+        $order->receiver_city_id = (int) Input::get("receiver_city_id");
         $this->recalculateDelivery($order);
         return $this->orderToJson($order);
     }
 
+    public function sender($id) {
+        $order = Order::where('id', '=', $id)
+                        ->where('user_id', '=', Auth::user()->id)->first();
+        $order->sender_city_id = (int) Input::get("sender_city_id");
+        $this->recalculateDelivery($order);
+        return $this->orderToJson($order);
+    }
+
+
     private function recalculateDelivery($order) {
         $receiverCityId = $order->receiver_city_id;
-        
-       
+        $senderCityId = $order->sender_city_id;
    
         if ($receiverCityId) {
            
             $calc = new CalculatePriceDeliveryCdek();
-            $calc->setSenderCityId('270');
+            $calc->setSenderCityId($senderCityId);
             $calc->setReceiverCityId($receiverCityId);
-            $calc->setDateExecute('2016-02-01');
+            $calc->setDateExecute(date("Y-m-d"));
             $calc->setTariffId('1');
          
             foreach ($order->items as $item) {
@@ -66,7 +106,7 @@ class OrderItemController extends AngController {
                     $calc->addGoodsItemBySize($item->product->weight/100, $item->product->length, $item->product->width, $item->product->height);
                 }
             }
-              //
+     
             if ($calc->calculate() === true) {
                 $res = $calc->getResult();
                 $order->delivery_price = $res['result']['price'];
@@ -103,7 +143,8 @@ class OrderItemController extends AngController {
 
     public function show($id) {
         $data = [
-            'order' => Order::findOrFail($id)
+            'order' => Order::findOrFail($id),
+            'products' => Product::lists('name','id')
         ];
         return view('order.edit', $data);
     }

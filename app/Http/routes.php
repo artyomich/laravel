@@ -38,6 +38,10 @@ Route::group(['middleware' => 'web'], function () {
 //This route is for customer's orders
 Route::get('orders', ['uses' => 'OrderController@index', 'as' => 'orders', 'middleware' => array('web', 'auth')]);
 
+//This route is for customer's orders
+Route::get('new', ['uses' => 'NewOrderController@index', 'as' => 'new', 'middleware' => array('web', 'auth')]);
+
+
 //This route is for editing orders by customers 
 Route::get('orders/{id}/edit', ['uses' => 'OrderItemController@show', 'as' => 'order.edit', 'middleware' => array('web', 'auth')])->where(['id' => '[0-9]+']);
 // API ROUTES ==================================  
@@ -50,6 +54,8 @@ Route::group(['prefix' => 'api', 'middleware' => array('web', 'auth')], function
     Route::resource('orders.items', 'OrderItemController');
     Route::post('orders/{id}/items/{itemId}/quantity', 'OrderItemController@quantity');
     Route::post('orders/{id}/receiver', 'OrderItemController@receiver');
+    Route::post('orders/{id}/sender', 'OrderItemController@sender');
+    Route::post('orders/{id}/items/{itemId}/add', 'OrderItemController@add');
 });
 
 // CATCH ALL ROUTE =============================  
