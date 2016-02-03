@@ -15,10 +15,10 @@ class AddWeightDistanceToOrdersTable extends Migration
         Schema::table('orders', function (Blueprint $table) {
             //
             $table->integer('delivery_price')->unsigned()->after('comment');
-            $table->var_char('receiver_city_id',255)->after('quantity');
+            $table->string('receiver_city_id')->after('delivery_price');
             $table->decimal('weight',8,2)->after('receiver_city_id');
             $table->decimal('volume',8,2)->after('weight');
-            $table->integer('distance')->unsigned()>after('volume');
+            $table->integer('distance')->unsigned()->after('volume');
         });
     }
 

@@ -102,9 +102,9 @@
 
             
                 <div class="text-left">
-                    {{ Form::label('product', 'Товар ') }} {{ Form::select('add_product',$products,null,['id'=>'add_product']) }}
-                    <input type="text" size="5" name="add_quantity" ng-model="item.add_quantity" placeholder="Кол-во">
-                    <button ng-click="addItem(item)" class="btn btn-primary btn-lg">
+                    {{ Form::label('product', 'Товар ') }} {{ Form::select('addProductId',$products,null,['id'=>'addProductId', 'ng-model'=>'addProductId']) }}
+                    <input type="text" size="5" name="addQuantity" ng-model="addQuantity" placeholder="Кол-во">
+                    <button ng-click="addItem()" class="btn btn-primary btn-lg">
                         <i class="glyphicon glyphicon-plus-sign"></i> Добавить в заказ
                     </button>                               
                 </div>

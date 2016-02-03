@@ -70,11 +70,11 @@ angular.module('orderItemCtrl', [])
             };
 
             // ADD NEW ORDER ITEM ====================================================
-            $scope.addItem = function (item) {
+            $scope.addItem = function () {
                 $scope.loading = true;
 
                 // use the function we created in our service
-                OrderItem.add($scope.order.id, item.id)
+                OrderItem.add($scope.order.id, $scope.addProductId, $scope.addQuantity)
                         .success(function (data) {
                             $scope.order = data;
                             $scope.loading = false;

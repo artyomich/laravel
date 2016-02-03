@@ -55,7 +55,7 @@ Route::group(['prefix' => 'api', 'middleware' => array('web', 'auth')], function
     Route::post('orders/{id}/items/{itemId}/quantity', 'OrderItemController@quantity');
     Route::post('orders/{id}/receiver', 'OrderItemController@receiver');
     Route::post('orders/{id}/sender', 'OrderItemController@sender');
-    Route::post('orders/{id}/items/{itemId}/add', 'OrderItemController@add');
+    Route::post('orders/{id}/add', 'OrderItemController@add');
 });
 
 // CATCH ALL ROUTE =============================  

@@ -17,7 +17,7 @@ class AddWeightWidthTableProducts extends Migration
             $table->decimal('weight',8,2)->after('price');
             $table->decimal('width',8,2)->after('weight');
             $table->decimal('length',8,2)->after('width');
-            $table->decimal('height',8,2)->after('height');
+            $table->decimal('height',8,2)->after('length');
         });
     }
 

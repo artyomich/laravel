@@ -28,33 +28,28 @@ class OrderItemController extends AngController {
         return $this->orderToJson($order);
     }
     
-    public function add($id, $itemId) {
+    public function add($id) {
         $order = Order::where('id', '=', $id)
                         ->where('user_id', '=', Auth::user()->id)->first();
         //$orderItem = $order->items()->findOrFail($id);
         //$productId = $order->items()->findOrFail($itemId);
   
-        //$orderItem = OrderItem::firstOrNew(array('quantity' => $add_quantity));
+        $orderItem = $order->items()->where('product_id','=',(int) Input::get("product_id"))->first();
         
-        //if(!$orderItem->isEmpty()){
-        //    $orderItem->quantity += (int) Input::get("add_quantity");
-        //    $orderItem->save();
-        //} else {
-        /*
-            $orderItem = new OrderItem;
-            $orderItem->order_id = (int) $id;
-            $orderItem->product_id = (int) $productId;
-            $orderItem->price = (int) $itemId;
-            $orderItem->quantity = (int) Input::get("add_quantity");
+        
+        if($orderItem){
+            $orderItem->quantity += (int) Input::get("quantity");
             $orderItem->save();
-          */  
+        } else {
+            $product = Product::findOrFail((int) Input::get("product_id"));    
+        
             $orderItem = new OrderItem;
             $orderItem->order_id = $id;
-            $orderItem->product_id = $id;
-            $orderItem->price = 1000;
-            $orderItem->quantity = 10;
+            $orderItem->product_id = $product->id;
+            $orderItem->price = $product->price;
+            $orderItem->quantity = (int) Input::get("quantity");
             $orderItem->save();
-        //}
+        }
         $this->recalculateDelivery($order);
 
         return $this->orderToJson($order);
@@ -159,7 +154,7 @@ class OrderItemController extends AngController {
         $order = Order::where('id', '=', $id)
                         ->where('user_id', '=', Auth::user()->id)->first();
 
-        $order->items()->delete($itemId);
+        $order->items()->findOrFail($itemId)->delete();
 
         $this->recalculateDelivery($order);
 
